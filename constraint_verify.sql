@@ -1,0 +1,31 @@
+/* FOREIGN KEY(SellerID) REFERENCES User(UserID) */
+SELECT *
+FROM Item
+WHERE SellerID NOT IN (
+	SELECT UserId
+	FROM Users
+);
+
+/* FOREIGN KEY(ItemID) REFERENCES Item(ItemID) */
+SELECT *
+FROM Category
+WHERE ItemId NOT IN (
+	SELECT ItemId
+	FROM Item
+);
+
+/* FOREIGN KEY(BidderID) REFERENCES User(UserID) */
+SELECT *
+FROM Bid
+WHERE BidderId NOT IN (
+	SELECT UserId
+	FROM Users
+);
+
+/* FOREIGN KEY(ItemID) REFERENCES Item(ItemID) */
+SELECT *
+FROM Bid
+WHERE ItemId NOT IN (
+	SELECT ItemId
+	FROM Item
+);
