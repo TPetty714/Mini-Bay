@@ -18,4 +18,3 @@ sqlite3 data.db < Trigger12_add.sql
 sqlite3 data.db < Trigger13_add.sql
 sqlite3 data.db < Trigger14_add.sql
 sqlite3 data.db < Trigger15_add.sql
-sqlite3 data.db < test.sql

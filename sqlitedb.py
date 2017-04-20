@@ -48,8 +48,8 @@ def setTime(new_time):
 
 # returns a single item specified by the Item's ID in the database
 def getItemById(item_id):
-  q = 'select * from Item where ID = $itemID'
-  result = query(q, { 'itemID': item_id })
+  q = 'select * from Item where ItemId = $ItemId'
+  result = query(q, { 'ItemId': item_id })
 
   try:
     return result[0]
@@ -66,8 +66,8 @@ def getBidsByItemId(itemID):
 
 # returns a single item specified by the Item's ID in the database
 def getUserById(user_id):
-  q = 'select * from User where userID = $userID'
-  result = query(q, { 'userID': user_id })
+  q = 'select * from Users where UserId = $UserId'
+  result = query(q, { 'UserId': user_id })
 
   try:
     return result[0]
@@ -92,9 +92,9 @@ def getItems(vars = {}, minPrice = '', maxPrice = '', status = 'all'):
   # If min- and/or maxPrice are defined, append those restrictions to query
   if (minPrice != '') or (maxPrice != ''):
     if vars != {}:                          q += ' AND '
-    if (minPrice != ''):                    q += ' currently >= ' + minPrice
+    if (minPrice != ''):                    q += ' Currently >= ' + minPrice
     if (minPrice != '' and maxPrice != ''): q += ' AND '
-    if (maxPrice != ''):                    q += ' currently <= ' + maxPrice
+    if (maxPrice != ''):                    q += ' Currently <= ' + maxPrice
 
   if (status != 'all'):
     if (vars != {}) or (minPrice != '') or (maxPrice != ''):
@@ -112,21 +112,27 @@ def getItems(vars = {}, minPrice = '', maxPrice = '', status = 'all'):
 
 
 def updateItemEndTime(itemID, new_end_time):
-  db.update('Item',  where='ID = ' + itemID,  ends = new_end_time)
+  db.update('Item',  where='ItemId = ' + itemID,  EndDate = new_end_time)
 
 
 def addBid(itemId, price, userId, current_time):
-  db.insert('Bid', itemId = itemId, amount = price, bidderId = userId, time = current_time)
-
+    t = sqlitedb.transaction()
+    try:
+        db.insert('Bid', ItemId = itemId, BidderId = userId, bidTime = current_time, Amount = price)
+    except Exception as e:
+       t.rollback()
+       print str(e)
+    else:
+       t.commit()
 def getWinnerId(itemID):
-  q  = 'select bidderID from Bid '
-  q += 'where itemID = $itemID '
-  q += 'and amount = ('
-  q +=   'select max(amount) from Bid '
-  q +=   'where itemID = $itemID'
+  q  = 'select BidderID from Bid '
+  q += 'where ItemId = $ItemId '
+  q += 'and Amount = ('
+  q +=   'select max(Amount) from Bid '
+  q +=   'where ItemId = $ItemId'
   q += ')'
-  
-  result = query(q, { 'itemID': itemID })
+
+  result = query(q, { 'ItemId': itemID })
 
   try:
     return result[0].bidderID
