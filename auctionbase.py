@@ -55,8 +55,24 @@ urls = (
   '/currtime', 'curr_time',
   '/selecttime', 'select_time',
   '/add_bid', 'add_bid',
+  '/search', 'search_items',
+  '/(.*)', 'view_item'
 )
 
+class search_items:
+    def GET(self):
+        return render_template('search_items.html')
+    def POST(self):
+        post_params = web.input()
+        print("Searching")
+        print("params" + post_params)
+        item_id = post_params['ItemId']
+        item_name = post_params['Name']
+        category = post_params['Category']
+
+        # items = sqlitedb.getItems({item_id},'','','all')
+        # print(items)
+        return render_template('select_time.html')
 
 
 class curr_time:

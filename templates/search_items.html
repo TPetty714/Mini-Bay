@@ -1,0 +1,11 @@
+{% extends "app_base.html" %}
+{% block content %}
+<h3> Search for items </h3>
+<form method="POST" action="searchitem" class="form-inline">
+{% if message is defined %}
+<div class="alert alert-warning">{{ message }}</div>
+{% endif %}
+<div class="alert alert-info">Search for items with any of the criteria</div>
+{% include 'searchtable.html' %}
+</form>
+{% endblock %}
