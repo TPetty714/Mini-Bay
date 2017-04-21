@@ -69,11 +69,26 @@ class search_items:
         item_id = post_params['ItemId']
         item_name = post_params['Name']
         category = post_params['Category']
-
-        # items = sqlitedb.getItems({item_id},'','','all')
+        min_price = post_params['MinPrice']
+        max_price = post_params['MaxPrice']
+        sMM = post_params['sMM']
+        sdd = post_params['sdd']
+        syyyy = post_params['syyyy']
+        sHH = post_params['sHH']
+        smm = post_params['smm']
+        sss = post_params['sss'];
+        start_time = '%s-%s-%s %s:%s:%s' % (syyyy, sMM, sdd, sHH, smm, sss)
+        sMM = post_params['eMM']
+        sdd = post_params['edd']
+        syyyy = post_params['eyyyy']
+        sHH = post_params['eHH']
+        smm = post_params['emm']
+        sss = post_params['ess'];
+        status = post_params['Status']
+        start_time = '%s-%s-%s %s:%s:%s' % (eyyyy, eMM, edd, eHH, emm, ess)
+        items = sqlitedb.getItems(item_id, item_name, category, min_price, max_price, start_time, end_time, status)
         # print(items)
         return render_template('select_time.html')
-
 
 class curr_time:
   # A simple GET request, to '/currtime'
@@ -151,7 +166,7 @@ class add_bid:
       )
 
     # (3) Users can't bid on closed auction items
-    if (string_to_time(item_row.EndDate) <= string_to_time(current_time)):
+    if (string_to_time(item_row.ends) <= string_to_time(current_time)):
       return render_template('add_bid.html',
         message = 'That auction is already closed'
       )
@@ -164,31 +179,28 @@ class add_bid:
       )
 
     # (5) Don't accept bids <= current highest bid
-    if float(price) <= float(item_row.Currently):
+    if float(price) <= float(item_row.currently):
       return render_template('add_bid.html',
-        message = 'You must make a bid higher than the current price (Currently ${}'.format(item_row.Currently) + ')'
+        message = 'You must make a bid higher than the current price (currently $' + item_row.currently + ')'
       )
-    if (string_to_time(current_time) == sqlitedb.query("select bidTime from Bid where bidTime == (select presentTime from CurrentTime)")[0]):
+
     ### ... but it's possible to succeed :P ########################
 
     # A bid at the buy_price closes the auction
-        if (item_row.BuyPrice):
-            if (price >= item_row.BuyPrice):
-              # Update ends to current_time
-              sqlitedb.updateItemEndTime(itemID, current_time);
-              return render_template(
-                'add_bid.html',
-                message = 'Congratulations! You just closed that auction by making a bid at or above the buy price'
-              )
-    else:
-        return render_template('add_bid.html', message = 'Bids must have unique times')
+    if (price >= item_row.buy_price):
+      # Update ends to current_time
+      sqlitedb.updateItemEndTime(itemID, current_time);
+      return render_template(
+        'add_bid.html',
+        message = 'Congratulations! You just closed that auction by making a bid at or above the buy price'
+      )
 
     # Add bid to Bid table in db
     sqlitedb.addBid(itemID, price, userID, current_time)
 
     return render_template(
       'add_bid.html',
-      message = 'Success! You\'ve just placed a bid on ' + item_row.Name + '({}'.format(ItemId) + ')'
+      message = 'Success! You\'ve just placed a bid on ' + item_row.name + '(' + itemID + ')'
     )
 
 

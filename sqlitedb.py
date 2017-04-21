@@ -76,12 +76,12 @@ def getUserById(user_id):
 
 
 
-def getItems(vars = {}, minPrice = '', maxPrice = '', status = 'all'):
+def getItems(itemid = '', name = '', category = '', minPrice = '', maxPrice = '', startTime = '', endTime = '', status = 'all'):
   # Create basic query that selects all items
   q = 'select * from Item'
     ############# 'where ends > (select time from currenttime)'
 
-  if (vars != {}) or (minPrice != '') or (maxPrice != '') or (status != 'all'):
+  if (itemid != '') or (name != '') or (category != '')  or (minPrice = '') or (maxPrice != '') or (startTime = '') or (endTime = '') or (status != 'all'):
     q += ' where '
 
   # If params for the search are indicated, add them to
