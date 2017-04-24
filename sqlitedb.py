@@ -1,3 +1,4 @@
+import sys; sys.path.insert(0, 'lib') 
 import web
 
 db = web.database(dbn='sqlite', db='data.db')
@@ -76,38 +77,38 @@ def getUserById(user_id):
 
 
 
-def getItems(itemid = '', name = '', category = '', minPrice = '', maxPrice = '', startTime = '', endTime = '', status = 'all'):
+#def getItems(itemid = '', name = '', category = '', minPrice = '', maxPrice = '', startTime = '', endTime = '', status = 'all'):
   # Create basic query that selects all items
-  q = 'select * from Item'
+#  q = 'select * from Item'
     ############# 'where ends > (select time from currenttime)'
 
-  if (itemid != '') or (name != '') or (category != '')  or (minPrice = '') or (maxPrice != '') or (startTime = '') or (endTime = '') or (status != 'all'):
-    q += ' where '
+#  if (itemid != '') or (name != '') or (category != '')  or (minPrice = '') or (maxPrice != '') or (startTime = '') or (endTime = '') or (status != 'all'):
+#    q += ' where '
 
   # If params for the search are indicated, add them to
   # narrow down the query
-  if vars != {}:
-    q += web.db.sqlwhere(vars, grouping=' AND ')
+#  if vars != {}:
+#    q += web.db.sqlwhere(vars, grouping=' AND ')
 
   # If min- and/or maxPrice are defined, append those restrictions to query
-  if (minPrice != '') or (maxPrice != ''):
-    if vars != {}:                          q += ' AND '
-    if (minPrice != ''):                    q += ' Currently >= ' + minPrice
-    if (minPrice != '' and maxPrice != ''): q += ' AND '
-    if (maxPrice != ''):                    q += ' Currently <= ' + maxPrice
+#  if (minPrice != '') or (maxPrice != ''):
+#    if vars != {}:                          q += ' AND '
+#    if (minPrice != ''):                    q += ' Currently >= ' + minPrice
+#    if (minPrice != '' and maxPrice != ''): q += ' AND '
+#    if (maxPrice != ''):                    q += ' Currently <= ' + maxPrice
 
-  if (status != 'all'):
-    if (vars != {}) or (minPrice != '') or (maxPrice != ''):
-      q += ' AND '
-    if status == 'open':
-      q += 'ends >= (select time from currenttime) and started <= (select time from currenttime)'
-    if status == 'close':
-      q += 'ends < (select time from currenttime)'
-    if status == 'notStarted':
-      q += 'started > (select time from currenttime)'
+#  if (status != 'all'):
+#    if (vars != {}) or (minPrice != '') or (maxPrice != ''):
+#      q += ' AND '
+#    if status == 'open':
+#      q += 'ends >= (select time from currenttime) and started <= (select time from currenttime)'
+#    if status == 'close':
+#      q += 'ends < (select time from currenttime)'
+#    if status == 'notStarted':
+#      q += 'started > (select time from currenttime)'
 
   # Return result of the query
-  return query(q)
+#  return query(q)
 
 
 
@@ -124,6 +125,7 @@ def addBid(itemId, price, userId, current_time):
        print str(e)
     else:
        t.commit()
+       
 def getWinnerId(itemID):
   q  = 'select BidderID from Bid '
   q += 'where ItemId = $ItemId '
@@ -144,6 +146,26 @@ def getWinnerId(itemID):
 def query(query_string, vars = {}):
   return list(db.query(query_string, vars))
 
-
+def addUser(userId, rating, location, country):
+    t = sqlitedb.transaction()
+    try:
+        db.insert('Users', UserID = userID, Rating = rating, Location = location, Country = country)
+        #db.update Users set Location=null where Location='NULL'
+        #db.update Users set Country=null where Location='NULL'
+    except Exception as e:
+       t.rollback()
+       print str(e)
+    else:
+       t.commit()
+	
+#def addBid(itemId, price, userId, current_time):
+#    t = sqlitedb.transaction()
+#    try:
+#        db.insert('Bid', ItemId = itemId, BidderId = userId, bidTime = current_time, Amount = price)
+#    except Exception as e:
+#       t.rollback()
+#       print str(e)
+#    else:
+#       t.commit()
 
 #####################END HELPER METHODS#####################

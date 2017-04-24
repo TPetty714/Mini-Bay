@@ -52,12 +52,14 @@ def render_template(template_name, **context):
 
 # first parameter => URL, second parameter => class name
 urls = (
-  '/currtime', 'curr_time',
-  '/selecttime', 'select_time',
-  '/add_bid', 'add_bid',
-  '/search', 'search_items',
-  '/(.*)', 'view_item'
-)
+	'/currtime', 'curr_time',
+	'/selecttime', 'select_time',
+	'/add_user', 'add_user',
+	'/add_bid', 'add_bid',
+	'/search', 'search_items',
+	'/(.*)', 'view_item'
+	)  
+
 
 class search_items:
     def GET(self):
@@ -133,7 +135,7 @@ class select_time:
     # we'll refer to it in our template as `message'
     return render_template('select_time.html', message = update_message)
 
-
+		
 
 class add_bid:
   # A GET request to the URL '/add_bid'
@@ -202,6 +204,35 @@ class add_bid:
       'add_bid.html',
       message = 'Success! You\'ve just placed a bid on ' + item_row.name + '(' + itemID + ')'
     )
+
+class add_user:
+	def GET(self):
+		return render_template('add_user.html')
+	
+	def POST(self):
+		post_params = web.input()
+		
+		Username = post_params['Username']
+		City = post_params['City']
+		Country = post_params['Country']
+		
+		#checks to see if a user name was given
+		if(Username == ''):
+			return render_template('add_user.html', message = 'Need to input a Username')
+		#check to see if user name exists
+		nameCheck = getUserById(Username)
+		if(nameCheck!=None):
+			return render_template('add_user.html', message = 'Username taken')
+		#make city and country equal null
+		if(City == ''):
+			City=null
+		if(Country == ''):
+			Country=null
+		#add user to database
+		sqlitedb.addUser(Username, 0, City, Country)
+		return render_template(
+		'add_user.html', message = 'User' + Username + 'created'
+		)
 
 
 ###########################################################################################
