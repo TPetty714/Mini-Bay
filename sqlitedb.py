@@ -75,7 +75,10 @@ def getUserById(user_id):
   except IndexError:
     return None
 
-
+def getItem(itemId):
+	q = 'select * from Item'
+	q+= 'where ItemId == itemId'
+	return quary(q)
 
 #def getItems(itemid = '', name = '', category = '', minPrice = '', maxPrice = '', startTime = '', endTime = '', status = 'all'):
   # Create basic query that selects all items
@@ -114,7 +117,6 @@ def getUserById(user_id):
 
 def updateItemEndTime(itemID, new_end_time):
   db.update('Item',  where='ItemId = ' + itemID,  EndDate = new_end_time)
-
 
 def addBid(itemId, price, userId, current_time):
     t = sqlitedb.transaction()
@@ -157,15 +159,6 @@ def addUser(userId, rating, location, country):
        print str(e)
     else:
        t.commit()
-	
-#def addBid(itemId, price, userId, current_time):
-#    t = sqlitedb.transaction()
-#    try:
-#        db.insert('Bid', ItemId = itemId, BidderId = userId, bidTime = current_time, Amount = price)
-#    except Exception as e:
-#       t.rollback()
-#       print str(e)
-#    else:
-#       t.commit()
+
 
 #####################END HELPER METHODS#####################

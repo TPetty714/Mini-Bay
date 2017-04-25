@@ -101,8 +101,6 @@ class curr_time:
     current_time = sqlitedb.getTime()
     return render_template('curr_time.html', time = current_time)
 
-
-
 class select_time:
   # Another GET request, this time to the URL '/selecttime'
   def GET(self):
@@ -134,8 +132,6 @@ class select_time:
     # Here, we assign `update_message' to `message', which means
     # we'll refer to it in our template as `message'
     return render_template('select_time.html', message = update_message)
-
-		
 
 class add_bid:
   # A GET request to the URL '/add_bid'
@@ -234,7 +230,15 @@ class add_user:
 		'add_user.html', message = 'User' + Username + 'created'
 		)
 
-
+class view_item:
+	def GET(self, itemId):
+		try:
+			item_info = sqlitedb.getItem(itemId)
+			return render_template('view_item.html', item_info)
+		except IndexError:
+			return None
+	
+		
 ###########################################################################################
 ##########################DO NOT CHANGE ANYTHING BELOW THIS LINE!##########################
 ###########################################################################################
